@@ -1,0 +1,570 @@
+/* src/App.css (PHIÊN BẢN HOÀN CHỈNH) */
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: #f4f7f6;
+  margin: 0;
+  padding: 20px;
+}
+
+.App {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+header {
+  padding: 20px 30px;
+  background-color: #004a99; /* Màu xanh doanh nghiệp */
+  color: white;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+main {
+  padding: 20px 30px;
+}
+
+main h2 {
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+/* === CSS CỦA FORM === */
+.form-container {
+  background-color: #fdfdfd;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 20px;
+  margin-bottom: 25px;
+}
+
+.form-container h2 {
+  margin-top: 0;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group textarea {
+  width: 95%; 
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-row .form-group {
+  flex: 1; /* Chia đôi cột */
+}
+
+button[type="submit"] {
+  background-color: #0056b3; 
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button[type="submit"]:hover {
+  background-color: #004a99;
+}
+
+button[type="submit"]:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+
+/* === CSS CỦA DANH SÁCH CÔNG VIỆC === */
+.task-item {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #fdfdfd;
+}
+
+.task-item h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.task-item p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* === CSS CỦA CÁC NÚT BẤM === */
+.task-actions {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+  display: flex; /* Cho các nút nằm cạnh nhau */
+  gap: 10px; /* Tạo khoảng cách giữa các nút */
+}
+
+.button-complete {
+  background-color: #28a745; /* Màu xanh lá */
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.button-complete:hover {
+  background-color: #218838;
+}
+
+.button-delete {
+  background-color: #dc3545; /* Màu đỏ */
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.button-delete:hover {
+  background-color: #c82333;
+}
+/* src/App.css (Thêm vào cuối file) */
+
+/* CSS CHO TRANG ĐĂNG NHẬP */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f7f6;
+}
+
+.login-form {
+  background: #ffffff;
+  padding: 30px 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-form h2 {
+  text-align: center;
+  color: #004a99;
+  margin-top: 0;
+  margin-bottom: 25px;
+}
+
+.error-message {
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 10px;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* CSS CHO NÚT ĐĂNG XUẤT (trong TaskList) */
+.button-logout {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+
+  /* Đẩy nút sang bên phải header */
+  margin-left: auto; 
+}
+
+.button-logout:hover {
+  background-color: #c82333;
+}
+
+/* Sửa lại header để chứa nút */
+header {
+  display: flex;
+  align-items: center;
+}
+/* src/App.css (Thêm vào cuối file) */
+
+/* CSS CHO THANH ĐIỀU HƯỚNG (NAV) */
+nav.main-nav {
+  margin: 0 auto; /* Đẩy thanh nav ra giữa header */
+  display: flex;
+  gap: 10px;
+}
+
+nav.main-nav a {
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #cce0f5; /* Màu chữ nhạt */
+  border-radius: 5px;
+  transition: background-color 0.2s;
+  font-weight: 500;
+}
+
+nav.main-nav a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Đây là class tự động của NavLink khi link được kích hoạt */
+nav.main-nav a.active {
+  background-color: #ffffff;
+  color: #004a99; /* Màu chữ đậm khi active */
+  font-weight: 700;
+}
+
+/* Sửa lại Header để chứa Nav và Nút Đăng xuất */
+header {
+  display: flex;
+  align-items: center;
+  /* (Các style cũ của header vẫn giữ nguyên) */
+}
+
+/* Đẩy nút Đăng xuất sang phải */
+header .button-logout {
+  margin-left: auto; 
+}
+
+
+/* CSS CHO TRANG BÁO CÁO */
+.report-container {
+  padding-top: 10px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.summary-card {
+  background-color: #fdfdfd;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.summary-card h3 {
+  margin: 0;
+  font-size: 2.5rem;
+  color: #004a99;
+}
+
+.summary-card p {
+  margin: 5px 0 0 0;
+  font-size: 1rem;
+  color: #555;
+  font-weight: 500;
+}
+
+/* Thẻ đặc biệt cho công việc Quá hạn */
+.summary-card.overdue h3 {
+  color: #dc3545; /* Màu đỏ */
+}
+/* src/App.css (Thêm vào cuối file) */
+
+/* CSS CHO TIÊU ĐỀ TRANG BÁO CÁO */
+.report-header {
+  display: flex;
+  justify-content: space-between; /* Đẩy 2 mục ra 2 bên */
+  align-items: center;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+.report-header h2 {
+  border-bottom: none; /* Bỏ đường viền cũ */
+  padding-bottom: 0;
+  margin: 0;
+}
+
+/* CSS CHO NÚT XUẤT FILE */
+.button-export {
+  background-color: #007bff; /* Màu xanh dương */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.button-export:hover {
+  background-color: #0069d9;
+}
+
+.button-export:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+/* src/App.css (Thêm vào cuối file) */
+
+/* CSS CHO BIỂU ĐỒ */
+.chart-container {
+  margin-top: 30px;
+  background-color: #fdfdfd;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 25px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.chart-container h3 {
+  text-align: center;
+  margin-top: 0;
+  font-weight: 600;
+  color: #333;
+}
+
+.chart-wrapper {
+  /* Giới hạn chiều cao của biểu đồ */
+  /* Nếu biểu đồ quá lớn, bạn có thể giảm 400px xuống */
+  max-width: 400px;
+  max-height: 400px;
+  margin: 0 auto; /* Căn giữa biểu đồ */
+}
+/* src/App.css (Thêm vào cuối file) */
+
+/* Di chuyển các nút sang phải */
+.report-header {
+  /* (Các style cũ của report-header giữ nguyên) */
+}
+
+.report-actions {
+  display: flex;
+  gap: 10px; /* Tạo khoảng cách giữa 2 nút */
+}
+
+/* Style cho nút In mới */
+.button-print {
+  background-color: #6c757d; /* Màu xám */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.button-print:hover {
+  background-color: #5a6268;
+}
+.button-print:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+/* === CSS QUAN TRỌNG: CẤU HÌNH KHI IN === */
+@media print {
+
+  /* Giấu toàn bộ Header của ứng dụng (Thanh Nav, Nút Đăng xuất) */
+  header {
+    display: none !important;
+  }
+
+  /* Giấu các nút bấm trong trang Báo cáo */
+  .report-actions {
+    display: none !important;
+  }
+
+  /* Tinh chỉnh lại nội dung Báo cáo khi in */
+  main {
+    padding: 0;
+  }
+  .report-container {
+    box-shadow: none;
+    border: none;
+    padding: 0;
+  }
+  .report-header {
+    border-bottom: none;
+  }
+  .summary-card {
+    border: 1px solid #ccc; /* Thêm viền nhẹ cho đẹp khi in */
+    box-shadow: none;
+  }
+  .chart-container {
+    box-shadow: none;
+    border: none;
+    padding: 0;
+    margin-top: 20px;
+    page-break-inside: avoid; /* Tránh ngắt biểu đồ */
+  }
+}
+/* src/App.css (Thêm vào cuối file) */
+
+/* CSS CHO NÚT GỬI EMAIL (MÀU CAM) */
+.button-email {
+  background-color: #ffc107; /* Màu vàng/cam */
+  color: #212529;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+.button-email:hover {
+  background-color: #e0a800;
+}
+.button-email:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+/* === CSS CHO MODAL POP-UP === */
+
+/* Lớp nền mờ */
+.modal-overlay {
+  position: fixed; /* Che toàn bộ màn hình */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Màu đen mờ 60% */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Luôn nổi lên trên cùng */
+}
+
+/* Nội dung Modal (Hộp trắng) */
+.modal-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  width: 100%;
+  max-width: 500px; /* Chiều rộng tối đa */
+  position: relative; /* Để định vị nút X */
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  text-align: center;
+  color: #333;
+}
+
+/* Nút X (Đóng Modal) */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #aaa;
+  cursor: pointer;
+}
+.modal-close:hover {
+  color: #333;
+}
+
+/* Nút Gửi (bên trong Modal) */
+.button-email-submit {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.button-email-submit:disabled {
+  background-color: #aaa;
+}
+
+/* Thông báo Lỗi / Thành công (trong Modal) */
+.modal-message {
+  text-align: center;
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 4px;
+}
+.modal-message.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+.modal-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+/* src/App.css (Thêm vào cuối file) */
+
+/* CSS CHO NÚT LINK AI (LỰA CHỌN 1) */
+.ai-link-button {
+  /* Sao chép style từ NavLink */
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #cce0f5; 
+  border-radius: 5px;
+  transition: background-color 0.2s;
+  font-weight: 500;
+
+  /* Thêm viền để làm nổi bật */
+  border: 1px solid #cce0f5;
+  margin-left: 15px; /* Tách khỏi 2 nút kia */
+}
+
+.ai-link-button:hover {
+  background-color: #ffffff;
+  color: #004a99; /* Đổi màu khi hover */
+}
