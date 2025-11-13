@@ -1,27 +1,30 @@
 // src/components/TaskList.jsx
-// (PHIÊN BẢN HOÀN CHỈNH - 2 Dropdown Đơn vị -> Người nhận)
+// (PHIÊN BẢN HOÀN CHỈNH - Đã kết nối với API Production)
 
-// 1. Import 'useMemo' để lọc danh sách
 import { useState, useEffect, useMemo } from 'react';
 import '../App.css'; 
 
+// 1. Nhận 'token' từ App.jsx
 function TaskList({ token }) {
   
   // --- PHẦN 1: STATE QUẢN LÝ ---
   const [tasks, setTasks] = useState([]);
   const [users, setUsers] = useState([]); 
-  const [departments, setDepartments] = useState([]); // <-- MỚI: State cho Đơn vị
+  const [departments, setDepartments] = useState([]); 
   const [loading, setLoading] = useState(true);
   
   const [formTitle, setFormTitle] = useState('');
   const [formDescription, setFormDescription] = useState('');
-  const [selectedDeptId, setSelectedDeptId] = useState(''); // <-- MỚI: State cho Dropdown Đơn vị
+  const [selectedDeptId, setSelectedDeptId] = useState(''); 
   const [formAssigneeId, setFormAssigneeId] = useState(''); 
   const [formDueDate, setFormDueDate] = useState('');
-  const [formStartDate, setFormStartDate] = useState('');
+  const [formStartDate, setFormStartDate] = useState(''); 
   const [isSubmitting, setIsSubmitting] = useState(false); 
 
   // --- PHẦN 2: HÀM GỌI API ---
+
+  // Lấy URL API từ file .env
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const authHeaders = {
     'Content-Type': 'application/json',
@@ -34,9 +37,9 @@ function TaskList({ token }) {
   // useEffect: Tải Tasks, Users, và Departments
   useEffect(() => {
     async function fetchTasks() {
-      // (Hàm này giữ nguyên)
       try {
-        const response = await fetch('http://localhost:3000/api/tasks', {
+        // SỬA URL:
+        const response = await fetch(`${API_URL}/api/tasks`, {
           method: 'GET',
           headers: authHeaderOnly
         });
@@ -50,9 +53,9 @@ function TaskList({ token }) {
     }
 
     async function fetchUsers() {
-      // (Hàm này giữ nguyên - NHƯNG CHÚNG TA ĐÃ LẤY 'department_id' TRONG API)
         try {
-          const response = await fetch('http://localhost:3000/api/users', {
+          // SỬA URL:
+          const response = await fetch(`${API_URL}/api/users`, {
             method: 'GET',
             headers: authHeaderOnly
           });
@@ -65,16 +68,16 @@ function TaskList({ token }) {
         }
     }
     
-    // <-- MỚI: Hàm 3: Lấy danh sách Đơn vị -->
     async function fetchDepartments() {
         try {
-          const response = await fetch('http://localhost:3000/api/departments', {
+          // SỬA URL:
+          const response = await fetch(`${API_URL}/api/departments`, {
             method: 'GET',
             headers: authHeaderOnly
           });
           const data = await response.json();
           if (data.success) {
-            setDepartments(data.data); // Lưu danh sách Đơn vị vào state
+            setDepartments(data.data); 
           }
         } catch (error) {
           console.error("Lỗi! Không thể tải đơn vị:", error);
@@ -83,39 +86,35 @@ function TaskList({ token }) {
 
     async function loadInitialData() {
         setLoading(true);
-        // <-- MỚI: Chạy cả 3 hàm song song -->
         await Promise.all([ 
             fetchTasks(),
             fetchUsers(),
-            fetchDepartments() // <-- THÊM MỚI
+            fetchDepartments() 
         ]);
         setLoading(false);
     }
     
     loadInitialData();
 
-  }, [token]); // Chạy lại nếu token thay đổi
+  }, [token, API_URL]); // Thêm API_URL vào dependencies
 
   
-  // <-- MỚI: PHẦN 3: LỌC DANH SÁCH NGƯỜI DÙNG THEO ĐƠN VỊ -->
-  // 'useMemo' sẽ tự động chạy lại khi 'selectedDeptId' hoặc 'users' thay đổi
+  // Lọc danh sách người dùng
   const filteredUsers = useMemo(() => {
     if (!selectedDeptId) {
-      return []; // Nếu chưa chọn Đơn vị, trả về mảng rỗng
+      return []; 
     }
-    // Lọc mảng 'users'
     return users.filter(user => 
       user.department_id === parseInt(selectedDeptId, 10)
     );
-  }, [selectedDeptId, users]); // Biến phụ thuộc
+  }, [selectedDeptId, users]); 
 
 
-  // (Các hàm handleSubmit, handleCompleteTask, handleDeleteTask giữ nguyên)
+  // (Các hàm handleSubmit, handleCompleteTask, handleDeleteTask)
   
   // TẠO (Create) công việc mới
   const handleSubmit = async (e) => {
     e.preventDefault(); 
-    // Cập nhật kiểm tra (thêm !selectedDeptId)
     if (!formTitle || !selectedDeptId || !formAssigneeId || !formDueDate || !formStartDate) { 
       alert("Vui lòng nhập Tiêu đề, chọn Đơn vị, Người nhận, Ngày giao và Ngày hết hạn.");
       return;
@@ -130,7 +129,8 @@ function TaskList({ token }) {
         start_date: formStartDate 
       };
       
-      const response = await fetch('http://localhost:3000/api/tasks', {
+      // SỬA URL:
+      const response = await fetch(`${API_URL}/api/tasks`, {
         method: 'POST',
         headers: authHeaders, 
         body: JSON.stringify(taskData), 
@@ -138,10 +138,9 @@ function TaskList({ token }) {
       const result = await response.json();
       if (result.success) {
         setTasks((prevTasks) => [...prevTasks, result.task]);
-        // Cập nhật reset (thêm setSelectedDeptId)
         setFormTitle('');
         setFormDescription('');
-        setSelectedDeptId(''); // <-- THÊM MỚI
+        setSelectedDeptId(''); 
         setFormAssigneeId(''); 
         setFormDueDate('');
         setFormStartDate(''); 
@@ -155,16 +154,68 @@ function TaskList({ token }) {
     }
   };
 
-  // (Hàm handleCompleteTask, handleDeleteTask giữ nguyên)
-  const handleCompleteTask = async (taskId) => { /* ... (Giữ nguyên) ... */ };
-  const handleDeleteTask = async (taskId) => { /* ... (Giữ nguyên) ... */ };
-  const getUserNameById = (userId) => { /* ... (Giữ nguyên) ... */ };
+  // CẬP NHẬT (Update) - Hoàn thành
+  const handleCompleteTask = async (taskId) => {
+    try {
+      // SỬA URL:
+      const response = await fetch(`${API_URL}/api/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: authHeaders, 
+        body: JSON.stringify({ status: 'COMPLETED' }), 
+      });
+      const result = await response.json();
+      if (result.success) {
+        setTasks((prevTasks) =>
+          prevTasks.map((task) =>
+            task.task_id === taskId ? { ...task, status: 'COMPLETED' } : task
+          )
+        );
+      } else {
+        alert("Cập nhật thất bại: " + result.message);
+      }
+    } catch (error) {
+      console.error("Lỗi khi cập nhật công việc:", error);
+    }
+  };
+
+  // XÓA (Delete) công việc
+  const handleDeleteTask = async (taskId) => {
+    if (!window.confirm("Bạn có chắc chắn muốn xóa công việc này?")) {
+      return; 
+    }
+    try {
+      // SỬA URL:
+      const response = await fetch(`${API_URL}/api/tasks/${taskId}`, {
+        method: 'DELETE',
+        headers: authHeaderOnly 
+      });
+      const result = await response.json();
+      if (result.success) {
+        setTasks((prevTasks) =>
+          prevTasks.filter((task) => task.task_id !== taskId)
+        );
+      } else {
+        alert("Xóa thất bại: " + result.message);
+      }
+    } catch (error) {
+      console.error("Lỗi khi xóa công việc:", error);
+    }
+  };
+
+
+  // HÀM TRA CỨU TÊN
+  const getUserNameById = (userId) => {
+    const user = users.find(u => u.user_id === userId);
+    if (user) {
+      return user.full_name;
+    }
+    return `ID: ${userId}`;
+  };
 
 
   // --- PHẦN 3: GIAO DIỆN (JSX) ---
   return (
     <>
-      {/* Bỏ <header> vì nó đã nằm trong MainLayout.jsx */}
       <main>
         {/* === FORM THÊM CÔNG VIỆC === */}
         <div className="form-container">
@@ -204,7 +255,7 @@ function TaskList({ token }) {
               </div>
             </div>
 
-            {/* <-- MỚI: Hàng chứa 2 Dropdown (Đơn vị & Người nhận) --> */}
+            {/* Hàng chứa 2 Dropdown (Đơn vị & Người nhận) */}
             <div className="form-row">
               {/* Dropdown 1: Đơn vị */}
               <div className="form-group">
@@ -212,8 +263,8 @@ function TaskList({ token }) {
                 <select
                     value={selectedDeptId}
                     onChange={(e) => {
-                        setSelectedDeptId(e.target.value); // Cập nhật Đơn vị
-                        setFormAssigneeId(''); // Reset Người nhận khi đổi Đơn vị
+                        setSelectedDeptId(e.target.value); 
+                        setFormAssigneeId(''); 
                     }}
                     disabled={isSubmitting || departments.length === 0}
                 >
@@ -232,11 +283,9 @@ function TaskList({ token }) {
                 <select
                     value={formAssigneeId}
                     onChange={(e) => setFormAssigneeId(e.target.value)}
-                    // Tắt đi nếu chưa chọn Đơn vị
                     disabled={isSubmitting || !selectedDeptId} 
                 >
                     <option value="">-- Chọn Người nhận --</option>
-                    {/* Chỉ lặp qua 'filteredUsers' (đã lọc) */}
                     {filteredUsers.map((user) => (
                         <option key={user.user_id} value={user.user_id}>
                             {user.full_name} ({user.username})
@@ -256,7 +305,6 @@ function TaskList({ token }) {
 
 
         {/* === DANH SÁCH CÔNG VIỆC === */}
-        {/* (Phần này giữ nguyên y hệt) */}
         <h2>Danh sách công việc</h2>
         {loading && <p>Đang tải dữ liệu...</p>}
         {!loading && tasks.length === 0 && <p>Chưa có công việc nào.</p>}

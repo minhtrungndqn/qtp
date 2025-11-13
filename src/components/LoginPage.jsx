@@ -1,16 +1,20 @@
 // src/components/LoginPage.jsx
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // <-- IMPORT MỚI
+// (PHIÊN BẢN HOÀN CHỈNH - Đã kết nối với API Production)
 
-// Chúng ta nhận một prop là onLoginSuccess, đây là hàm
-// do App.jsx đưa vào để báo "Đăng nhập thành công!"
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import hook điều hướng
+
 function LoginPage({ onLoginSuccess }) {
+  // Lấy URL API từ file .env
+  const API_URL = import.meta.env.VITE_API_URL;
+
   // State riêng của trang Login
-  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(''); // Để hiển thị lỗi
   const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate(); // Hook để chuyển trang
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Ngăn form tải lại trang
@@ -24,8 +28,8 @@ function LoginPage({ onLoginSuccess }) {
     }
 
     try {
-      // 1. Gọi API /api/auth/login
-      const response = await fetch('http://localhost:3000/api/auth/login', {
+      // 1. SỬA URL: Gọi API Production
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,9 +42,10 @@ function LoginPage({ onLoginSuccess }) {
       // 2. Phân tích kết quả
       if (data.success) {
         // THÀNH CÔNG!
-        // Gọi hàm prop onLoginSuccess và đưa 'token' lên cho App.jsx
+        // Gọi hàm prop onLoginSuccess (từ App.jsx) và đưa 'token' lên
         onLoginSuccess(data.token);
-	navigate('/tasks');
+        // Tự động điều hướng đến trang công việc
+        navigate('/tasks'); 
       } else {
         // THẤT BẠI (Sai mật khẩu, vv)
         setError(data.message || 'Đăng nhập thất bại.');
@@ -77,7 +82,7 @@ function LoginPage({ onLoginSuccess }) {
             disabled={isLoading}
           />
         </div>
-
+        
         {/* Hiển thị lỗi nếu có */}
         {error && <p className="error-message">{error}</p>}
 

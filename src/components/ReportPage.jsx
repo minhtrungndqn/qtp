@@ -1,32 +1,38 @@
 // src/components/ReportPage.jsx
-// (PHIÊN BẢN HOÀN CHỈNH - Đã có Modal Gửi Email)
+// (PHIÊN BẢN HOÀN CHỈNH - Đã kết nối với API Production)
 
 import React, { useState, useEffect } from 'react';
+// Import thư viện Chart.js
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
+// Đăng ký các thành phần của Biểu đồ
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 function ReportPage({ token, onLogout }) {
+  // Lấy URL API từ file .env
+  const API_URL = import.meta.env.VITE_API_URL;
+
   // --- STATE CŨ ---
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // --- 1. STATE MỚI CHO MODAL EMAIL ---
-  const [showEmailModal, setShowEmailModal] = useState(false); // Ẩn/hiện modal
-  const [recipientEmail, setRecipientEmail] = useState(''); // Email người nhận
-  const [emailStatus, setEmailStatus] = useState(''); // Trạng thái: 'sending', 'success', 'error'
-  const [emailMessage, setEmailMessage] = useState(''); // Thông báo lỗi/thành công
+  // --- STATE MỚI CHO MODAL EMAIL ---
+  const [showEmailModal, setShowEmailModal] = useState(false); 
+  const [recipientEmail, setRecipientEmail] = useState(''); 
+  const [emailStatus, setEmailStatus] = useState(''); 
+  const [emailMessage, setEmailMessage] = useState(''); 
 
-  // (useEffect ... fetchSummary() ... giữ nguyên)
+  // --- HÀM 1: LẤY DỮ LIỆU TÓM TẮT ---
   useEffect(() => {
     async function fetchSummary() {
       try {
         setLoading(true);
         setError('');
         
-        const response = await fetch('http://localhost:3000/api/reports/summary', {
+        // SỬA URL:
+        const response = await fetch(`${API_URL}/api/reports/summary`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`
@@ -35,6 +41,7 @@ function ReportPage({ token, onLogout }) {
 
         const data = await response.json();
 
+        // Xử lý lỗi Token hết hạn
         if (response.status === 401 || response.status === 403) {
             alert(data.message); 
             onLogout(); 
@@ -55,21 +62,24 @@ function ReportPage({ token, onLogout }) {
     }
 
     fetchSummary();
-  }, [token, onLogout]);
+  }, [token, onLogout, API_URL]); // Thêm API_URL vào dependencies
 
   
-  // (Hàm handleExportCSV ... giữ nguyên)
+  // --- HÀM 2: XỬ LÝ XUẤT FILE CSV ---
   const handleExportCSV = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/reports/export', {
+      // SỬA URL:
+      const response = await fetch(`${API_URL}/api/reports/export`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
+
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
+      
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -80,21 +90,23 @@ function ReportPage({ token, onLogout }) {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+
     } catch (err) {
       console.error('Lỗi khi xuất CSV:', err);
       alert('Đã xảy ra lỗi khi cố gắng xuất file.');
     }
   };
 
-  // --- 2. HÀM MỚI: XỬ LÝ GỬI EMAIL ---
+  // --- HÀM 3: XỬ LÝ GỬI EMAIL ---
   const handleSendEmail = async (e) => {
-    e.preventDefault(); // Ngăn form (trong modal) tải lại trang
+    e.preventDefault(); 
     
-    setEmailStatus('sending'); // Báo là "Đang gửi..."
+    setEmailStatus('sending'); 
     setEmailMessage('');
 
     try {
-      const response = await fetch('http://localhost:3000/api/reports/email', {
+      // SỬA URL:
+      const response = await fetch(`${API_URL}/api/reports/email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -107,16 +119,14 @@ function ReportPage({ token, onLogout }) {
 
       if (result.success) {
         setEmailStatus('success');
-        setEmailMessage(result.message); // Hiển thị thông báo thành công từ API
-        setRecipientEmail(''); // Xóa email trong ô input
-        // (Chúng ta có thể tự động đóng modal sau 2 giây)
+        setEmailMessage(result.message); 
+        setRecipientEmail(''); 
         setTimeout(() => {
           setShowEmailModal(false);
           setEmailStatus('');
           setEmailMessage('');
         }, 2000);
       } else {
-        // Hiển thị lỗi từ API (ví dụ: email không hợp lệ)
         setEmailStatus('error');
         setEmailMessage(result.message);
       }
@@ -129,7 +139,6 @@ function ReportPage({ token, onLogout }) {
 
 
   // --- TÍNH TOÁN DỮ LIỆU ---
-  // (Tính toán các giá trị hiển thị cho thẻ)
   const newTasks = summary?.status_counts?.NEW || 0;
   const inProgressTasks = summary?.status_counts?.IN_PROGRESS || 0;
   const completedTasks = summary?.status_counts?.COMPLETED || 0;
@@ -137,7 +146,7 @@ function ReportPage({ token, onLogout }) {
   const totalTasks = newTasks + inProgressTasks + completedTasks;
   const notCompletedTasks = newTasks + inProgressTasks;
 
-  // (Dữ liệu cho Biểu đồ tròn - giữ nguyên)
+  // Dữ liệu cho Biểu đồ tròn
   const pieChartData = {
     labels: ['Đã Hoàn thành', 'Chưa Hoàn thành'],
     datasets: [
@@ -161,16 +170,16 @@ function ReportPage({ token, onLogout }) {
           <h2>Báo cáo Tổng hợp</h2>
           
           <div className="report-actions">
-            {/* Nút Gửi Email (MỚI) */}
+            {/* Nút Gửi Email */}
             <button
-              onClick={() => setShowEmailModal(true)} // Mở modal
+              onClick={() => setShowEmailModal(true)}
               className="button-email"
               disabled={loading}
             >
               Gửi Email
             </button>
             
-            {/* Nút Xuất CSV (Cũ) */}
+            {/* Nút Xuất CSV */}
             <button 
               onClick={handleExportCSV}
               className="button-export"
@@ -179,7 +188,7 @@ function ReportPage({ token, onLogout }) {
               Xuất Báo cáo (CSV)
             </button>
 
-            {/* Nút In (Cũ) */}
+            {/* Nút In */}
             <button
               onClick={() => window.print()}
               className="button-print"
@@ -191,12 +200,11 @@ function ReportPage({ token, onLogout }) {
 
         </div>
 
-        {/* (Các thẻ Thống kê và Biểu đồ - giữ nguyên) */}
+        {/* Các thẻ Thống kê và Biểu đồ */}
         {loading && <p>Đang tải dữ liệu báo cáo...</p>}
         {error && <p className="error-message">{error}</p>}
         {summary && (
           <div className="summary-grid">
-            {/* (4 thẻ card) */}
             <div className="summary-card"><h3>{totalTasks}</h3><p>Tổng số Công việc</p></div>
             <div className="summary-card"><h3>{completedTasks}</h3><p>Đã Hoàn thành</p></div>
             <div className="summary-card"><h3>{notCompletedTasks}</h3><p>Chưa Hoàn thành</p></div>
@@ -214,13 +222,10 @@ function ReportPage({ token, onLogout }) {
 
       </div>
 
-      {/* === MODAL GỬI EMAIL (MỚI) === */}
-      {/* Chỉ hiển thị modal nếu showEmailModal === true */}
+      {/* === MODAL GỬI EMAIL === */}
       {showEmailModal && (
-        // Lớp nền mờ
         <div className="modal-overlay"> 
           <div className="modal-content">
-            {/* Nút X để đóng modal */}
             <button className="modal-close" onClick={() => setShowEmailModal(false)}>×</button>
             
             <h3>Gửi Báo cáo qua Email</h3>
@@ -234,11 +239,10 @@ function ReportPage({ token, onLogout }) {
                   onChange={(e) => setRecipientEmail(e.target.value)}
                   placeholder="nhap_email_nguoi_nhan@gmail.com"
                   required
-                  disabled={emailStatus === 'sending'} // Khóa input khi đang gửi
+                  disabled={emailStatus === 'sending'}
                 />
               </div>
               
-              {/* Nút Gửi (bên trong modal) */}
               <button 
                 type="submit" 
                 className="button-email-submit" 
@@ -247,7 +251,6 @@ function ReportPage({ token, onLogout }) {
                 {emailStatus === 'sending' ? 'Đang gửi...' : 'Gửi'}
               </button>
 
-              {/* Hiển thị thông báo (Thành công / Lỗi) */}
               {emailMessage && (
                 <p className={`modal-message ${emailStatus}`}>
                   {emailMessage}
